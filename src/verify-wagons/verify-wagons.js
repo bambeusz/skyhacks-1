@@ -256,7 +256,7 @@ const getContainingFactories = (baseURL, containingPaths) => {
 window.addEventListener('load', () => {
     const start = new Date().toISOString();
     console.log('started', start);
-    const containingPaths = ['Validation', 'Special', 'Training'];
+    const containingPaths = ['Special'];
     const containingPathsFactories = getContainingFactories(path.resolve(__dirname + '/../footage'), containingPaths);
 
     new SequencePromise(containingPathsFactories).execute()
