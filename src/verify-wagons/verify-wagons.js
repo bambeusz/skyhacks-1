@@ -183,7 +183,9 @@ const getFrameFactories = (baseURL, frames) => {
 
             return verify(dir, frame)
                 .then(frame => {
+                    console.log('frame done', frame, new Date().toISOString());
                     return [...frameData, frame];
+
                 });
         });
 };
@@ -238,6 +240,7 @@ const getContainingFactories = (baseURL, containingPaths) => {
         .map(containingPath => (containingPathData) => {
             const dir = baseURL + '/' + containingPath;
             if (!fs.existsSync(dir) || !fs.lstatSync(dir).isDirectory()) {
+            	console.log(dir, new Date().toISOString());
                 return Promise.resolve(containingPathData);
             }
 
