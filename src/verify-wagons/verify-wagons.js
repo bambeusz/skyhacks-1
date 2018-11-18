@@ -1,6 +1,7 @@
 const jsdom = require('jsdom');
 const { createCanvas, loadImage } = require('canvas');
 const fs = require('fs');
+const path = require('path');
 const json2csv = require('./json2csv');
 
 const html = `<!DOCTYPE html>
@@ -255,7 +256,7 @@ window.addEventListener('load', () => {
     const start = new Date().toISOString();
     console.log('started', start);
     const containingPaths = ['Validation', 'Special', 'Training'];
-    const containingPathsFactories = getContainingFactories(__dirname + '/footage', containingPaths);
+    const containingPathsFactories = getContainingFactories(path.resolve(__dirname + '../footage'), containingPaths);
 
     new SequencePromise(containingPathsFactories).execute()
         .then((data) => {
