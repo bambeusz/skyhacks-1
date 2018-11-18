@@ -4,7 +4,7 @@
   "description": "",
   "main": "src/verify-wagons/index.js",
   "scripts": {
-    "verify-wagons": "node ./src/verify-vagons/verify-wagons.js",
+    "verify-wagons": "node ./src/verify-wagons/verify-wagons.js"
   },
   "author": "",
   "license": "ISC",
