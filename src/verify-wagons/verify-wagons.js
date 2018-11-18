@@ -84,10 +84,10 @@ const configR = () => {
     };
 };
 const configL = () => {
-    const errorRatio = .15;
+    const errorRatio = .14;
     const actualrectSize = {
-        w: 20,
-        h: 20,
+        w: 21,
+        h: 21,
     };
     const searchSize = {
         w: 27,
