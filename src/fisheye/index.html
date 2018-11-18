@@ -9,23 +9,68 @@
 <canvas id="canvas" width="1280" height="1024"></canvas>
 
 <script src="/fisheyegl/fisheyegl.js"></script>
+<script src="/jszip/dist/jszip.js"></script>
+<script src="/jszip/vendor/FileSaver.js"></script>
 <script>
+    const train = '64';
+    const side = 'left';
+    const containingDir = 'Special';
+    localStorage.setItem('fisheye_removed', JSON.stringify([]));
+    const range = [0, 455];
+    const base = '/footage/' + containingDir + '/0_' + train + '/0_' + train + '_' + side + '/0_' + train + '_' + side + '_';
+
+    class SequencePromise {
+        constructor(promiseFactories = []) {
+            this.factories = promiseFactories;
+        }
+
+        execute() {
+            return this.factories.reduce((acu, factory) => acu.then(data => factory(data)), Promise.resolve([]))
+        }
+    }
+
+    const factories = Array.apply(null, {length: Math.abs(range[1] - range[0])})
+        .map((item, index) => (data) => {
+            return new Promise((resolve) => {
+                let distorter = FisheyeGl({image: base + (index + range[0]) + '.jpg'});
+
+                distorter.lens.a     = 1;
+                distorter.lens.b     = 1;
+                distorter.lens.Fx    = .09;
+                distorter.lens.Fy    = .22;
+                distorter.lens.scale = 1.06;
+
+                distorter.run(false, () => {
+                    setTimeout(() => {
+                        const canvas = document.getElementById('canvas');
+                        const base64 = canvas.toDataURL();
+                        resolve(base64.replace(/^data:image\/(png|jpg|jpeg);base64,/, ""));
+                    }, 100);
+                });
+            })
+                .then(itemData => {
+                    // const removed = JSON.parse(localStorage.getItem('fisheye_removed') || `[]`);
+                    // localStorage.setItem('fisheye_removed', JSON.stringify([...removed, itemData]));
+                    return [...data, itemData];
+                });
+        });
+
     window.onload = () => {
-        var distorter = FisheyeGl({
-            image: '/footage/Validation/0_51/0_51_left/0_51_left_0.jpg',
-        });
+        new SequencePromise(factories).execute()
+            .then((images) => {
+                const jszip = new JSZip();
+                const img = jszip.folder("without-fisheye");
 
-        distorter.lens.a     = 1;
-        distorter.lens.b     = 1;
-        distorter.lens.Fx    = .2;
-        distorter.lens.Fy    = .2;
+                images.forEach((image, index) => {
+                    img.file('/0_' + train + '_' + side + '_' + (range[0] + index) + '.jpg', image, {base64: true});
+                });
 
-        distorter.run(false, () => {
-            const canvas = document.getElementById('canvas');
-            const base64 = canvas.toDataURL('image/png');
-
-            window.savebase64(base64);
-        });
+                jszip.generateAsync({type:"blob"})
+                    .then(function(content) {
+                        // see FileSaver.js
+                        saveAs(content, "images.zip");
+                    });
+            });
     };
 </script>
 </body>
