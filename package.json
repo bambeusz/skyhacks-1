@@ -4,7 +4,7 @@
   "description": "",
   "main": "src/verify-wagons/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "verify-wagons": "node ./src/verify-vagons/verify-wagons.js",
   },
   "author": "",
   "license": "ISC",

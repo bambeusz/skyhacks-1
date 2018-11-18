@@ -217,7 +217,7 @@ const getTrainFactories = (baseURL, trains) => {
         })
         .map((train) => (trainData) => {
             const dir = baseURL + '/' + train;
-            if (!fs.existsSync(dir)){
+            if (!fs.existsSync(dir) || !fs.lstatSync(dir).isDirectory()){
                 return Promise.resolve(trainData);
             }
 
@@ -236,7 +236,7 @@ const getContainingFactories = (baseURL, containingPaths) => {
     return containingPaths
         .map(containingPath => (containingPathData) => {
             const dir = baseURL + '/' + containingPath;
-            if (!fs.existsSync(dir)) {
+            if (!fs.existsSync(dir) || !fs.lstatSync(dir).isDirectory()) {
                 return Promise.resolve(containingPathData);
             }
 
@@ -252,14 +252,15 @@ const getContainingFactories = (baseURL, containingPaths) => {
 };
 
 window.addEventListener('load', () => {
-    console.log(new Date().toISOString());
+    const start = new Date().toISOString();
+    console.log('started', start);
     const containingPaths = ['Validation', 'Special', 'Training'];
     const containingPathsFactories = getContainingFactories(__dirname + '/footage', containingPaths);
 
     new SequencePromise(containingPathsFactories).execute()
         .then((data) => {
             fs.writeFileSync(__dirname + '/data.json', JSON.stringify(data), 'utf-8');
-            console.log(new Date().toISOString());
+            console.log('started', start, 'ended', new Date().toISOString());
             json2csv();
         });
 });
