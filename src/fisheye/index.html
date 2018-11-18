@@ -29,7 +29,7 @@
         }
     }
 
-    const factories = Array.apply(null, {length: Math.abs(range[1] - range[0])})
+    const factories = Array.apply(null, {length: Math.abs(range[1] - range[0] + 1)})
         .map((item, index) => (data) => {
             return new Promise((resolve) => {
                 let distorter = FisheyeGl({image: base + (index + range[0]) + '.jpg'});
