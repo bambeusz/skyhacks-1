@@ -183,7 +183,6 @@ const getFrameFactories = (baseURL, frames) => {
 
             return verify(dir, frame)
                 .then(frame => {
-                    console.log('frame done', frame, new Date().toISOString());
                     return [...frameData, frame];
 
                 });
@@ -240,7 +239,6 @@ const getContainingFactories = (baseURL, containingPaths) => {
         .map(containingPath => (containingPathData) => {
             const dir = baseURL + '/' + containingPath;
             if (!fs.existsSync(dir) || !fs.lstatSync(dir).isDirectory()) {
-            	console.log(dir, new Date().toISOString());
                 return Promise.resolve(containingPathData);
             }
 
@@ -259,7 +257,7 @@ window.addEventListener('load', () => {
     const start = new Date().toISOString();
     console.log('started', start);
     const containingPaths = ['Validation', 'Special', 'Training'];
-    const containingPathsFactories = getContainingFactories(path.resolve(__dirname + '../footage'), containingPaths);
+    const containingPathsFactories = getContainingFactories(path.resolve(__dirname + '/../footage'), containingPaths);
 
     new SequencePromise(containingPathsFactories).execute()
         .then((data) => {
