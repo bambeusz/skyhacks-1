@@ -22,3 +22,22 @@ Grab your coffee, sit back, and relax. This takes approx. 20s-30s per train, so 
 
 Csv files lay in `/src/verify-wagons/csv` directory.
 
+### 4. Run fisheye distortion removal
+
+You need to modify the `/src/fisheye/index.html` file to adjust it to your needs. These are:
+- `const train = '63';`
+- `const side = 'right';`
+- `const containingDir = 'Special';`
+- `const range = [0, 463];`
+
+Run `npm run remove-fisheye`, and wait until images download.
+
+Pass the images to OCS processing
+
+### 5. Then there is the OCR
+
+You need to run `ocr/process.py`.
+
+### 6. Pass UIC codes 
+- put txt files into `/src/verify-wagons/data`
+- run `npm run add-uics`
