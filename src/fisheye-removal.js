@@ -1,26 +1,3 @@
-const jsdom = require('jsdom');
-const fs = require('fs');
-
-const html = `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>fisheye</title>
-</head>
-<body>
-
-<canvas id="canvas"></canvas>
-
-</body>
-</html>`;
-
-const dom = new jsdom.JSDOM(html, { runScripts: "dangerously", ProcessExternalResources: ['script', 'img'], pretendToBeVisual: true });
-
-var window = dom.window;
-global.window = window;
-global.navigator = window.navigator;
-global.document = window.document;
-
 const FisheyeGL = require('./fisheyegl');
 
 var distorter = FisheyeGL({

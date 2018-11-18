@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>track</title>
+
+    <script src="../build/tracking.js"></script>
+
+    <style>
+        #gap {
+            display: none;
+        }
+
+        .demo-container {
+            position: relative;
+            overflow: hidden;
+        }
+
+        #image {
+            position: absolute;
+            top: -100%;
+        }
+    </style>
+</head>
+<body>
+
+<div class="demo-frame">
+    <div class="demo-container">
+        <img id="image" src="./Validation/0_51/0_51_left/0_51_left_28.jpg" />
+        <canvas id="canvas"></canvas>
+        <div id="gap"></div>
+    </div>
+</div>
+
+<script>
+    window.onload = function() {
+        const errorRatio = .15;
+        const actualrectSize = {
+            w: 20,
+            h: 20,
+        };
+        const searchSize = {
+            w: 27,
+            h: 26,
+        };
+        const allowedError = {
+            w: actualrectSize.w * errorRatio,
+            h: actualrectSize.h * errorRatio,
+        };
+        const A = { x: 635, y: 329 };
+
+        var image = document.getElementById('image');
+        var width = image.offsetWidth;
+        var height = image.offsetHeight;
+        var canvas = document.getElementById('canvas');
+
+        var gap = document.getElementById('gap');
+        gap.innerText = 'false';
+        canvas.width = width;
+        canvas.height = height;
+        var context = canvas.getContext('2d');
+
+        tracking.Fast.THRESHOLD = 25;
+        context.drawImage(image, 0, 0, width, height);
+
+        context.strokeStyle="red";
+        context.rect(A.x, A.y, searchSize.w, searchSize.h);
+
+        var imageData = context.getImageData(A.x, A.y, searchSize.w, searchSize.h);
+        var gray = tracking.Image.grayscale(imageData.data, searchSize.w, searchSize.h);
+        var corners = tracking.Fast.findCorners(gray, searchSize.w, searchSize.h);
+
+        for (let i = 0; i < gray.length; i++) {
+            imageData.data[i] = gray[i];
+        }
+
+        const coordinates = corners.reduce((acu, corner, index) => {
+            if (index % 2 === 0) {
+                return {
+                    ...acu,
+                    x: [
+                        ...acu.x,
+                        corner,
+                    ],
+                };
+            }
+            return {
+                ...acu,
+                y: [
+                    ...acu.y,
+                    corner,
+                ],
+            };
+        }, {x: [], y: []});
+
+        const top = Math.min(...coordinates.y);
+        const left = Math.min(...coordinates.x);
+        const right = Math.max(...coordinates.x);
+        const bottom = Math.max(...coordinates.y);
+
+        const x = A.x + left;
+        const y = A.y + top;
+        const w = Math.abs(left - right);
+        const h = Math.abs(top - bottom);
+
+        if (Math.abs(w - actualrectSize.w) <= allowedError.w && Math.abs(h - actualrectSize.h) <= allowedError.h) {
+            alert('match!');
+        }
+        context.rect(x, y, w, h);
+        context.stroke();
+
+        console.log(w, h);
+    }
+</script>
+
+</body>
+</html>
